@@ -1,5 +1,7 @@
 # OliMid-U
 
+![OliMid-U](https://github.com/oliou/OliMid-U/blob/master/OliMid-U%20small.JPG?raw=true)
+
 
 ## Presentation
 
