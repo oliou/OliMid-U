@@ -1,8 +1,8 @@
 ///////////////////////////////////////////////////////////
-//  midi_input_output.ino                                //
-//  Example: MIDI input & MIDI output                    //
-//  https://github.com/ddiakopoulos/hiduino              //
-//  Last Updated: 17 December 2015                       //
+//  OliMid-U.ino                                         //
+//                                                       //
+//  https://github.com/oliou/OliMid-U                    //
+//                                                       //
 ///////////////////////////////////////////////////////////
 
 #include <MIDI.h>
@@ -11,7 +11,10 @@
 
 MIDI_CREATE_DEFAULT_INSTANCE();
 
-// PINOUT
+// PINOUT VARS
+const int encPinA= 2; //the clk attach to pin 2
+const int encPinB= 3; //the dt pin attach to pin 3
+const int encSwPin= 4 ;//the sw pin attach to pin 4
 const int ledPin = 13; 
 const int recLedPin = A0; 
 const int recPin = A1; 
@@ -30,7 +33,7 @@ const int f8Pin = 9;
 
 OneButton shiftButton(shiftPin, true);
 
-//PIN STATE
+//PIN STATE VARS
 bool recPinPrevState = false;
 bool encSwPinPrevState = false;
 bool shiftPinPrevState = false;
@@ -51,11 +54,9 @@ long previousMillis = 0;
 long interval = 500;
 long midiClockPeriod = 1000;
 
+//ENCODER VARS
 unsigned long currentTime;
 unsigned long loopTime;
-const int encPinA= 2; //the clk attach to pin 2
-const int encPinB= 3; //the dt pin attach to pin 3
-const int encSwPin= 4 ;//the sw pin attach to pin 4
 byte encoder_A;
 byte encoder_B;
 byte encoder_A_prev=0;
