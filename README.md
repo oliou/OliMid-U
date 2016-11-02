@@ -41,6 +41,28 @@ x1 green led
 
 ## Manual
 
+![Panel](https://github.com/oliou/OliMid-U/blob/master/panel.jpg?raw=true)
+
+### Wheel Modes
+
+
+### Midi Mapping
+
+Button       | Shift Released| Shift Pressed
+------------ | ------------- | -------------
+Play / Pause | | 
+Stop | |
+Rec | |  
+> | | 
+< | | 
+F1 | | 
+F2 | | 
+F3 | | 
+F4 | | 
+F5 | | 
+F6 | | 
+F7 | | 
+F8 | | 
 
 
 ## What else?
