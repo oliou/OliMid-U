@@ -4,11 +4,11 @@
 ## Presentation
 
 OliMid-U is a partially MCU compliant MIDI/USB controller built around an Arduino Uno Board, a rotary encoder, several momentary buttons and the lid of a small Vegemite jar. 
-The primary reason for that project is Firewire being obsolete, pushing me to plan for the replacement of my Tascam Fireone audio interface which includes a very convenient MIDI controller built around a huge jog-wheel.
+The primary reason for that project is Firewire being obsolete (and not included in my future laptop), forcing me to plan for the replacement of my Tascam Fireone audio interface which includes a very convenient MIDI controller built around a huge jog-wheel. And to use that Arduino board taking the dust for a long time.
 
 ## Pre-requisite 
 
-The Arduino board requires to be flashed with the HIDUINO firmware.
+The Arduino requires to be flashed with the HIDUINO firmware.
 
 https://github.com/ddiakopoulos/hiduino
 
@@ -43,3 +43,4 @@ x1 green led
 
 ## What else?
 
+To add a setup mode to assign controller/note numbers on the fly? (See https://www.arduino.cc/en/Reference/EEPROM )
