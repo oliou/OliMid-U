@@ -6,8 +6,8 @@
 ///////////////////////////////////////////////////////////
 
 #include <MIDI.h>
-#include <OneButton.h>
-#include <Encoder_Polling.h>
+#include <OneButton.h> // https://github.com/mathertel/OneButton
+#include <Encoder_Polling.h> // https://github.com/frodofski/Encoder_Polling
 
 MIDI_CREATE_DEFAULT_INSTANCE();
 
