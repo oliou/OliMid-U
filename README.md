@@ -18,14 +18,14 @@ You will need an [ISP Programmer Module](http://www.ebay.com.au/itm/AVR-USB-Tiny
 
 ## External Libraries
 
--[OneButton](https://github.com/mathertel/OneButton) for handling long and double press
+[OneButton](https://github.com/mathertel/OneButton) for handling long and double press
 
--[Encoder Polling](https://github.com/frodofski/Encoder_Polling) for handling encoder direction
+[Encoder Polling](https://github.com/frodofski/Encoder_Polling) for handling encoder direction
 
 
 ## Components
 
-x1 x [Arduino Uno](http://www.ebay.com.au/itm/Arduino-UNO-R3-Arduino-Clone-Compatible-Uno-R3-USB-Cable-AU-Stock-/131606915147?hash=item1ea462284b:g:BBgAAOSwpLNYADtu)
+x1 [Arduino Uno](http://www.ebay.com.au/itm/Arduino-UNO-R3-Arduino-Clone-Compatible-Uno-R3-USB-Cable-AU-Stock-/131606915147?hash=item1ea462284b:g:BBgAAOSwpLNYADtu)
 
 x1 [rotary encoder](http://www.ebay.com.au/itm/Rotary-Encoder-Module-Brick-Sensor-Development-Board-Test-For-Arduino-New-OG-/281937129178?hash=item41a4c32eda:g:S~IAAOSwFNZWwqfc)
 
