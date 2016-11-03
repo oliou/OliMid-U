@@ -44,7 +44,7 @@ x1 lid from a small Vegemite jar
 
 ## Manual
 
-![Panel](https://github.com/oliou/OliMid-U/blob/master/panel.jpg?raw=true)
+![Panel](https://github.com/oliou/OliMid-U/blob/master/panel.png?raw=true)
 
 ### Midi Mapping
 Button       | Shift Released| Shift Pressed
