@@ -238,7 +238,7 @@ void toggleNonMCUWheelMode(){
   }else{  // Set Custom values set in Reaper to "Move cursor forward/backwward one mesure"
     defaultEncCWNum=50;
     defaultEncCCWNum=51;
-    flashLed(ledPin,200,1);
+    flashLed(ledPin,300,1);
   }
 }
 

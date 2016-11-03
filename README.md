@@ -43,28 +43,51 @@ x1 green led
 
 ![Panel](https://github.com/oliou/OliMid-U/blob/master/panel.jpg?raw=true)
 
-### Wheel Modes
-
-
 ### Midi Mapping
-
 Button       | Shift Released| Shift Pressed
 ------------ | ------------- | -------------
-Play / Pause | | 
-Stop | |
-Rec | |  
-> | | 
-< | | 
-F1 | | 
-F2 | | 
-F3 | | 
-F4 | | 
-F5 | | 
-F6 | | 
-F7 | | 
-F8 | | 
+Play / Pause | Note 94 | Green flash twice: Set the wheel in MCU mode: CW*: CC60 val:1, CCW**: CC***60 val:65;  Green flash once: back to regular mode
+Stop | Note 93 | /
+Rec | Note 95 |  Note 98 
+Wheel CW, mode 1 (Default)|CC: 50 val:1  | CC: 52 val:1
+Wheel CCW, mode 1 (Default)|CC: 51 val:65 | CC: 53 val:65
+Wheel CW, mode 2 (Double press on shift)|CC: 54 val:1  | CC: 52 val:1
+Wheel CCW, mode 2 (Double press on shift)|CC: 55 val:65 | CC: 53 val:65
+Wheel CW, MCU mode (shift+Play)|CC: 60 val:1  | CC: 52 val:1
+Wheel CCW, MCU mode (Shift+Play)|CC: 60 val:65 | CC: 53 val:65
+> | Note 92| Note 97
+< | Note 91| Note 96 
+F1 | Note 54| Note 62
+F2 | Note 55| Note 63
+F3 |Note 56 | Note 64
+F4 |Note 57 | Note 65
+F5 | Note 58| Note 66
+F6 | Note 59| Note 67
+F7 | Note 60| Note 68
+F8 | Note 61| Note 69
+
+*CW: Clock-Wise
+**CCW: Counter Clock-Wise
+***CC: Control Change
+
+### Wheel Modes
+Modes       | Command | Visual feedback
+------------ | ------------- | -------------
+Mode 1 (Default) |Shift double-press from mode 2, shift + play from MCU mode |x1 long Green flash
+Mode 2 |Double-press on shift to enter,  double-press to revert to mode 1 | x2 short Green flash
+MCU |shift + play to enter,  shift + play to revert to mode 1 | x3 short Green flash
 
 
-## What else?
+### Visual feedback
+ Context  | Green Led | Red Led
+------------ | ------------- | -------------
+Play | Flash in sync with MIDI BPM |  /
+Record |  Flash in sync with MIDI BPM |  Flash in sync with MIDI BPM
+Switch to mode 1 |  x1 long Green flash |  /
+Switch to mode 2 |  x2 short Green flash |  /
+Switch to MCU mode |  x3 short Green flash |  /
 
-To add a setup mode to assign controller/note numbers on the fly? (See https://www.arduino.cc/en/Reference/EEPROM )
+## What's Next?
+
+To add a setup mode to assign controller/note numbers on the fly and offline persistence? (See https://www.arduino.cc/en/Reference/EEPROM )
+
