@@ -8,12 +8,14 @@
 #include <MIDI.h>
 #include <OneButton.h> // https://github.com/mathertel/OneButton
 #include <Encoder_Polling.h> // https://github.com/frodofski/Encoder_Polling
+#include <EEPROM.h>
+
 
 MIDI_CREATE_DEFAULT_INSTANCE();
 
 // PINOUT VARS
-const int encPinA= 2; //the clk attach to pin 2
-const int encPinB= 3; //the dt pin attach to pin 3
+const int encAPin= 2; //the clk attach to pin 2
+const int encBPin= 3; //the dt pin attach to pin 3
 const int encSwPin= 4 ;//the sw pin attach to pin 4
 const int ledPin = 13; 
 const int recLedPin = A0; 
@@ -31,6 +33,45 @@ const int f6Pin = 11;
 const int f7Pin = 10;
 const int f8Pin = 9;        
 
+//Default note/CC values
+int encCwMCUDefNum=60;
+int encCcwMCUDefNum=60;
+int encCwMode1DefNum=50;
+int encCcwMode1DefNum=51;
+int encCwMode2DefNum=52;
+int encCcwMode2DefNum=53;
+
+
+const int ledDefNum = 13; 
+const int recLedDefNum = A0; 
+const int recDefNum = A1; 
+const int shiftDefNum = 0; 
+const int stopDefNum = 93; 
+
+const int encSwDefNumA = 94;
+const int backwardDefNumA = 91; 
+const int forwardDefNumA = 92; 
+const int f1DefNumA = 54;
+const int f2DefNumA = 55;
+const int f3DefNumA = 56;
+const int f4DefNumA = 57;
+const int f5DefNumA = 58;
+const int f6DefNumA = 59;
+const int f7DefNumA = 60;
+const int f8DefNumA = 61; 
+
+const int encSwDefNumB = 0;
+const int backwardDefNumB = 96; 
+const int forwardDefNumB = 97; 
+const int f1DefNumB = 62;
+const int f2DefNumB = 63;
+const int f3DefNumB = 64;
+const int f4DefNumB = 65;
+const int f5DefNumB = 66;
+const int f6DefNumB = 67;
+const int f7DefNumB = 68;
+const int f8DefNumB = 69; 
+
 OneButton shiftButton(shiftPin, true);
 
 //PIN STATE VARS
@@ -40,7 +81,6 @@ bool shiftPinPrevState = false;
 bool stopPinPrevState = false;
 bool backwardPinPrevState = false;
 bool forwardPinPrevState = false;
-
 bool f1PinPrevState = false;
 bool f2PinPrevState = false;
 bool f3PinPrevState = false;
@@ -60,10 +100,7 @@ unsigned long loopTime;
 byte encoder_A;
 byte encoder_B;
 byte encoder_A_prev=0;
-int encCWNum=60;
-int encCCWNum=60;
-int defaultEncCWNum=50;
-int defaultEncCCWNum=51;
+
 unsigned char prevDir=0;
 
 //synchro values
@@ -73,16 +110,17 @@ bool rec_flag = false;
 
 int midiChannel=1;
 
+bool setMode = false;
 
 void setup() 
 {
   //set clkPin,dePin,swPin as INPUT
 
-  encoder_begin(encPinB, encPinA);
+  encoder_begin(encBPin, encAPin);
 
   //PIN MODE
-  pinMode(encPinA, INPUT);
-  pinMode(encPinB, INPUT);
+  pinMode(encAPin, INPUT);
+  pinMode(encBPin, INPUT);
   pinMode(encSwPin, INPUT);
 
   pinMode(recLedPin, OUTPUT); 
@@ -135,51 +173,50 @@ void loop()
   // keep watching the push buttons:
   shiftButton.tick();
   
-  //BUTTONS
+  //BUTTONS ASSIGNEMENT
   shiftPinPrevState = setButtonHandler(shiftPin, shiftPinPrevState, 0); //70 
-  stopPinPrevState = setButtonHandler(stopPin, stopPinPrevState, 93); 
+  stopPinPrevState = setButtonHandler(stopPin, stopPinPrevState, stopDefNum); 
+  recPinPrevState = setButtonHandler(recPin, recPinPrevState, 95);
 
-  if(!shiftPinPrevState){ // SHIFT NOT PRESSED
-    encCWNum=defaultEncCWNum;
-    encCCWNum=defaultEncCCWNum;
+  if(!shiftPinPrevState){ // SHIFT NOT PRESSED; MODE A
+    encCwMCUDefNum=encCwMode1DefNum;
+    encCcwMCUDefNum=encCcwMode1DefNum;
     
-    backwardPinPrevState = setButtonHandler(backwardPin, backwardPinPrevState, 91); 
-    forwardPinPrevState = setButtonHandler(forwardPin, forwardPinPrevState, 92); 
-    f1PinPrevState = setButtonHandler(f1Pin, f1PinPrevState, 54); 
-    f2PinPrevState = setButtonHandler(f2Pin, f2PinPrevState, 55); 
-    f3PinPrevState = setButtonHandler(f3Pin, f3PinPrevState, 56); 
-    f4PinPrevState = setButtonHandler(f4Pin, f4PinPrevState, 57); 
-    f5PinPrevState = setButtonHandler(f5Pin, f5PinPrevState, 58); 
-    f6PinPrevState = setButtonHandler(f6Pin, f6PinPrevState, 59); 
-    f7PinPrevState = setButtonHandler(f7Pin, f7PinPrevState, 60); 
-    f8PinPrevState = setButtonHandler(f8Pin, f8PinPrevState, 61); 
-    encSwPinPrevState = setButtonHandler(encSwPin, encSwPinPrevState, 94);
-    recPinPrevState = setButtonHandler(recPin, recPinPrevState, 95);
+    backwardPinPrevState = setButtonHandler(backwardPin, backwardPinPrevState, backwardDefNumA); 
+    forwardPinPrevState = setButtonHandler(forwardPin, forwardPinPrevState, forwardDefNumA); 
+    f1PinPrevState = setButtonHandler(f1Pin, f1PinPrevState, f1DefNumA); 
+    f2PinPrevState = setButtonHandler(f2Pin, f2PinPrevState, f2DefNumA); 
+    f3PinPrevState = setButtonHandler(f3Pin, f3PinPrevState, f3DefNumA); 
+    f4PinPrevState = setButtonHandler(f4Pin, f4PinPrevState, f4DefNumA); 
+    f5PinPrevState = setButtonHandler(f5Pin, f5PinPrevState, f5DefNumA); 
+    f6PinPrevState = setButtonHandler(f6Pin, f6PinPrevState, f6DefNumA); 
+    f7PinPrevState = setButtonHandler(f7Pin, f7PinPrevState, f7DefNumA); 
+    f8PinPrevState = setButtonHandler(f8Pin, f8PinPrevState, f8DefNumA); 
+    encSwPinPrevState = setButtonHandler(encSwPin, encSwPinPrevState, encSwDefNumA);
 
-  }else{ // SHIFT PRESSED
-    encCWNum=52;
-    encCCWNum=53;
+  }else{ // SHIFT PRESSED; MODE B
+    encCwMCUDefNum=encCwMode2DefNum;
+    encCcwMCUDefNum=encCcwMode2DefNum;
     
-    backwardPinPrevState = setButtonHandler(backwardPin, backwardPinPrevState, 96); 
-    forwardPinPrevState = setButtonHandler(forwardPin, forwardPinPrevState, 97); 
-    f1PinPrevState = setButtonHandler(f1Pin, f1PinPrevState, 62); 
-    f2PinPrevState = setButtonHandler(f2Pin, f2PinPrevState, 63); 
-    f3PinPrevState = setButtonHandler(f3Pin, f3PinPrevState, 64); 
-    f4PinPrevState = setButtonHandler(f4Pin, f4PinPrevState, 65); 
-    f5PinPrevState = setButtonHandler(f5Pin, f5PinPrevState, 66); 
-    f6PinPrevState = setButtonHandler(f6Pin, f6PinPrevState, 67); 
-    f7PinPrevState = setButtonHandler(f7Pin, f7PinPrevState, 68); 
-    f8PinPrevState = setButtonHandler(f8Pin, f8PinPrevState, 69); 
-    encSwPinPrevState = setButtonHandler(encSwPin, encSwPinPrevState, 0); //custom state to switch jogwheel to defaut MCU mode
-    recPinPrevState = setButtonHandler(recPin, recPinPrevState, 98);
+    backwardPinPrevState = setButtonHandler(backwardPin, backwardPinPrevState, backwardDefNumB); 
+    forwardPinPrevState = setButtonHandler(forwardPin, forwardPinPrevState, forwardDefNumB); 
+    f1PinPrevState = setButtonHandler(f1Pin, f1PinPrevState, f1DefNumB); 
+    f2PinPrevState = setButtonHandler(f2Pin, f2PinPrevState, f2DefNumB); 
+    f3PinPrevState = setButtonHandler(f3Pin, f3PinPrevState, f3DefNumB); 
+    f4PinPrevState = setButtonHandler(f4Pin, f4PinPrevState, f4DefNumB); 
+    f5PinPrevState = setButtonHandler(f5Pin, f5PinPrevState, f5DefNumB); 
+    f6PinPrevState = setButtonHandler(f6Pin, f6PinPrevState, f6DefNumB); 
+    f7PinPrevState = setButtonHandler(f7Pin, f7PinPrevState, f7DefNumB); 
+    f8PinPrevState = setButtonHandler(f8Pin, f8PinPrevState, f8DefNumB); 
+    encSwPinPrevState = setButtonHandler(encSwPin, encSwPinPrevState, encSwDefNumB); //custom state to switch jogwheel to defaut MCU mode
   }
   
   //ENCODER
   int direction = encoder_data(); // Check for rotation
   if(direction == 1){       // If its forward...
-    MIDI.sendControlChange(encCWNum, 1, midiChannel);  
+    MIDI.sendControlChange(encCwMCUDefNum, 1, midiChannel);  
   }else if(direction == -1){ // If its backward...
-    MIDI.sendControlChange(encCCWNum, 65, midiChannel);  
+    MIDI.sendControlChange(encCcwMCUDefNum, 65, midiChannel);  
   }  
 
   unsigned long currentMillis = millis();
@@ -231,21 +268,21 @@ void shiftBtnDoubleclick() {
 } 
 
 void toggleNonMCUWheelMode(){
-  if(defaultEncCWNum == 50 && defaultEncCCWNum == 51){ // Set Custom values set in Reaper to "Move cursor to grid division"
-    defaultEncCWNum=54;
-    defaultEncCCWNum=55;
+  if(encCwMode1DefNum == 50 && encCcwMode1DefNum == 51){ // Set Custom values set in Reaper to "Move cursor to grid division"
+    encCwMode1DefNum=54;
+    encCcwMode1DefNum=55;
     flashLed(ledPin,100,2);
   }else{  // Set Custom values set in Reaper to "Move cursor forward/backwward one mesure"
-    defaultEncCWNum=50;
-    defaultEncCCWNum=51;
+    encCwMode1DefNum=50;
+    encCcwMode1DefNum=51;
     flashLed(ledPin,300,1);
   }
 }
 
 void toggleMCUWheelMode(){
-  if(defaultEncCWNum != 60 && defaultEncCCWNum != 60){ //Set MCU mode
-    defaultEncCWNum=60;
-    defaultEncCCWNum=60;
+  if(encCwMode1DefNum != 60 && encCcwMode1DefNum != 60){ //Set MCU mode
+    encCwMode1DefNum=60;
+    encCcwMode1DefNum=60;
     digitalWrite(ledPin, HIGH);
     flashLed(ledPin,100,3); 
   }
@@ -255,8 +292,8 @@ void toggleMCUWheelMode(){
 }
 
 //void shiftBtnLongPress(){ //Default MCU Mode, cancel with double click
-//    defaultEncCWNum=60;
-//    defaultEncCCWNum=60;
+//    encCwMode1DefNum=60;
+//    encCcwMode1DefNum=60;
 //    digitalWrite(ledPin, HIGH);
 //    flashLed(ledPin,100,3);
 //}
