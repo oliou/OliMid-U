@@ -243,17 +243,14 @@ void loop()
           case midi::Stop:
               play_flag = false;
               rec_flag = false;
+              updateLeds();     
               number_of_received_clocks=0;
               break;
           case midi::Clock:     
+              updateLeds();
               if(play_flag) { 
-                number_of_received_clocks++;
-                //Serial.println(number_of_received_clocks);
-                if(number_of_received_clocks%24==0) //see MIDI specification: the clock is sent 24 times for quarter note, && 120BMP=120 quarter notes for minute => BPM value= 60/time to receive 24 clocks
-                {
-                  updateLeds();
-                }
-              } 
+                number_of_received_clocks++;        
+              }
               break;
           // See the online reference for other message types
           default:
@@ -309,43 +306,48 @@ void flashLed(int pin, int duration, int repeat) {
 }
 
 void updateLeds() {
-    if(rec_flag){
-      digitalWrite(ledPin, HIGH);
-      digitalWrite(recLedPin, HIGH);
-      delay(50); //high part of the clock square wave.
+    if(play_flag){
+      if(number_of_received_clocks==0){
+         digitalWrite(ledPin, HIGH);
+      }
+      if(number_of_received_clocks%24==0) //see MIDI specification: the clock is sent 24 times for quarter note, && 120BMP=120 quarter notes for minute => BPM value= 60/time to receive 24 clocks
+      {
+        digitalWrite(ledPin, !digitalRead(ledPin));  
+        if(rec_flag){
+          digitalWrite(recLedPin, !digitalRead(ledPin)); 
+        }
+      }
+    }else{
       digitalWrite(ledPin, LOW);
       digitalWrite(recLedPin, LOW);
-    }else{
-      digitalWrite(ledPin, HIGH);
-      delay(50); //high part of the clock square wave.
-      digitalWrite(ledPin, LOW);
     }
 }
 
 bool setButtonHandler(int pinId, bool buttonPressed, int noteNumber){
   byte pinState = digitalRead(pinId);
   if(pinState == LOW && !buttonPressed){
-    if(noteNumber != 0 ){
-      MIDI.sendNoteOn(noteNumber, 127,  midiChannel);
-    } 
     if(noteNumber == 93){ // Stop Button
       play_flag = false;
       rec_flag = false;
       updateLeds();
+      number_of_received_clocks=0; 
     }
-    if(noteNumber == 93){ // Play Button
+    if(noteNumber == 94){ // Play Button
+      number_of_received_clocks=0; 
       play_flag = true;
-      number_of_received_clocks=0;
+      updateLeds(); 
     }
     if(pinId == encSwPin && noteNumber == 0){ // Shift + Play 
       toggleMCUWheelMode();
-    }
+    }  
     if(noteNumber == 95){ // Rec Button
       play_flag = true;
       rec_flag = true;
       number_of_received_clocks=0;
-      digitalWrite(recLedPin, HIGH);
     }
+    if(noteNumber != 0){
+      MIDI.sendNoteOn(noteNumber, 127,  midiChannel);
+    } 
     buttonPressed=true;
     delay(100);
   }
@@ -358,4 +360,3 @@ bool setButtonHandler(int pinId, bool buttonPressed, int noteNumber){
   }
   return buttonPressed;
 }
-
